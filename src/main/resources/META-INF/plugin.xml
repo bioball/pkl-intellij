@@ -160,6 +160,21 @@
     <localInspection shortName="pkl.UnusedLocalDefinitions" displayName="Unused local definitions"
                      groupName="Pkl" enabledByDefault="true" level="WARNING" language="Pkl"
                      implementationClass="org.pkl.intellij.PklUnusedLocalDefinitionsInspection"/>
+    <codeInsight.declarativeInlayProvider bundle="org.pkl.intellij.PklBundle"
+                                          group="TYPES_GROUP"
+                                          implementationClass="org.pkl.intellij.inlay.PklTypeInlayHintsProvider"
+                                          isEnabledByDefault="true"
+                                          language="Pkl"
+                                          nameKey="org.pkl.inlays.types"
+                                          descriptionKey="org.pkl.inlays.types.description"
+                                          providerId="pkl.implicit.inlays.types" />
+    <codeInsight.declarativeInlayProvider bundle="org.pkl.intellij.PklBundle" group="PARAMETERS_GROUP"
+                                          implementationClass="org.pkl.intellij.inlay.PklParameterNameInlayHintsProvider"
+                                          isEnabledByDefault="true"
+                                          language="Pkl"
+                                          nameKey="org.pkl.inlays.params"
+                                          descriptionKey="org.pkl.inlays.params.description"
+                                          providerId="pkl.implicit.params" />
   </extensions>
 
   <actions>
