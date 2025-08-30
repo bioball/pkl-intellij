@@ -1,5 +1,7 @@
 = Pkl IntelliJ Plugin
 
+Sample change
+
 :experimental:
 :uri-docs: https://pkl-lang.org/intellij/current
 :uri-docs-installation: {uri-docs}/installation.html
