@@ -22,20 +22,12 @@ import java.lang.ref.SoftReference
 import java.util.ResourceBundle
 import org.jetbrains.annotations.PropertyKey
 
-@Suppress("unused")
 object PklBundle {
-  private lateinit var bundleRef: Reference<ResourceBundle>
   private const val BUNDLE = "org.pkl.intellij.PklBundle"
 
-  private val bundle: ResourceBundle
-    get() {
-      var bundle = IntelliJSoftReference.dereference(bundleRef)
-      if (bundle == null) {
-        bundle = ResourceBundle.getBundle(BUNDLE)!!
-        bundleRef = SoftReference(bundle)
-      }
-      return bundle
-    }
+  private val bundle: ResourceBundle by lazy {
+    ResourceBundle.getBundle(BUNDLE)
+  }
 
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String {
     return AbstractBundle.message(bundle, key, *params)

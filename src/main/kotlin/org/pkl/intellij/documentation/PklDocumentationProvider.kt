@@ -24,8 +24,12 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.isAncestor
 import com.intellij.psi.util.parentOfTypes
 import java.util.function.Consumer
+import com.intellij.openapi.editor.Editor
+import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
+import org.pkl.intellij.PklBundle
 import org.pkl.intellij.documentation.DocumentationTypeNameRenderer.renderModuleName
 import org.pkl.intellij.documentation.DocumentationTypeNameRenderer.renderTypeName
 import org.pkl.intellij.packages.dto.PklProject
@@ -36,13 +40,57 @@ import org.pkl.intellij.type.*
 import org.pkl.intellij.util.escapeXml
 
 class PklDocumentationProvider : AbstractDocumentationProvider() {
+  private val keywords = TokenSet.create(
+    PklElementTypes.ABSTRACT,
+    PklElementTypes.OPEN,
+    PklElementTypes.HIDDEN,
+    PklElementTypes.FIXED,
+    PklElementTypes.LOCAL,
+    PklElementTypes.CONST,
+    PklElementTypes.AMENDS,
+    PklElementTypes.EXTENDS,
+    PklElementTypes.AS,
+    PklElementTypes.THIS,
+    PklElementTypes.OUTER,
+    PklElementTypes.MODULE,
+  )
+
+  override fun getCustomDocumentationElement(
+    editor: Editor,
+    file: PsiFile,
+    contextElement: PsiElement?,
+    targetOffset: Int
+  ): PsiElement? {
+    if (keywords.contains(contextElement?.elementType)) {
+      return contextElement
+    }
+    return null
+  }
+
   override fun getQuickNavigateInfo(element: PsiElement, originalElement: PsiElement): String? =
     buildString {
       if (!renderSignature(element, originalElement)) return null
     }
 
+  private fun renderMarkdown(text: String): String {
+    val tree = MarkdownParser(PkldocFlavorDescriptor).buildMarkdownTreeFromString(text)
+    return HtmlGenerator(text, tree, PkldocFlavorDescriptor).generateHtml()
+  }
+
+  private fun generateDocForKeyword(elementType: IElementType): String? {
+    val docs = when (elementType) {
+      PklElementTypes.ABSTRACT -> PklBundle.message("abstractModifierDocs")
+      PklElementTypes.FIXED -> PklBundle.message("fixedModifierDocs")
+      else -> null
+    } ?: return null
+    return renderMarkdown(docs)
+  }
+
   override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
     val context = originalElement?.enclosingModule?.pklProject
+    if (keywords.contains(element.elementType)) {
+      return generateDocForKeyword(element.elementType!!)
+    }
     if (element is PklProperty && !element.isDefinition(element.enclosingModule?.pklProject)) {
       val target = element.propertyName.resolve(context) ?: return null
       return generateDoc(target, originalElement)
