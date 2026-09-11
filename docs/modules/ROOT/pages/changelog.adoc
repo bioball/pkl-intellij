@@ -9,6 +9,7 @@
 * Fix create file action (https://github.com/apple/pkl-intellij/pull/252[#252]).
 * Fix thrown `NullPointerException` in PklBreadcrumbsProvider (https://github.com/apple/pkl-intellij/pull/253[#253]).
 * Fix thrown `Throwable` when the loaded stdlib is less than 0.32 (https://github.com/apple/pkl-intellij/pull/254[#254]).
+* Fix thrown `com.intellij.openapi.diagnostic.UnhandledException` (https://github.com/apple/pkl-intellij/pull/256[#256]).
 
 === Aditions
 
